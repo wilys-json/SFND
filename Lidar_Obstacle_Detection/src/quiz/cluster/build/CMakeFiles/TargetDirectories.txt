@@ -1,3 +1,0 @@
-/root/project/p1/src/quiz/cluster/build/CMakeFiles/rebuild_cache.dir
-/root/project/p1/src/quiz/cluster/build/CMakeFiles/edit_cache.dir
-/root/project/p1/src/quiz/cluster/build/CMakeFiles/quizCluster.dir
