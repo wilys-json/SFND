@@ -79,21 +79,19 @@ void render2DTree(Node* node, pcl::visualization::PCLVisualizer::Ptr& viewer, Bo
 
 // Recursive Function to find nearby points in the same cluster
 void Proximity(KdTree* tree, float distanceTol,
-	const std::vector<std::vector<float>>& points,
-	std::unordered_set<int>& processed, const std::vector<float>& point,
-	const int& id, std::vector<int>& cluster)
+	const std::vector<std::vector<float>>& points, const int& id,
+	std::vector<bool>& processed, std::vector<int>& cluster)
 {
 		cluster.push_back(id); // Add point to cluster
-		processed.insert(id);  // Mark point as processed
+		processed[id] = true;  // Mark point as processed
 
 		// Find nearby points within Distance Tolerance
 		std::vector<int> nearbyIds = tree->search(point, distanceTol);
 		for (auto& nearbyId : nearbyIds) {
 			// If nearby point has not been processed
-			if (processed.count(nearbyId) == 0)
+			if (processed[nearbyId] == false)
 				// Call recursive Proximity
-				Proximity(tree, distanceTol, points, processed,
-									points[nearbyId], nearbyId, cluster);
+				Proximity(tree, distanceTol, points, nearbyId, processed, cluster);
 		}
 }
 
@@ -103,22 +101,22 @@ std::vector<std::vector<int>> euclideanCluster(const std::vector<std::vector<flo
 {
 
 	std::vector<std::vector<int>> clusters;  // output cluster
-	std::unordered_set<int> processed;  // helper set to mark points as processed
+	std::vector<bool> processed(points.size(), false);  // helper set to mark points as processed
 
 	// Iterate through each point
-	for (auto& point : points) {
-		int id = tree->search(point);
-		if (id >= 0) {
+	int i = 0;
+	while(i < points.size()) {
 			// If point has not been processed
-			if (processed.count(id) == 0) {
+			if (processed[i] == false) {
 			// Create new cluster
 			std::vector<int> cluster;
 			// Call recursive Proximity function
-			Proximity(tree, distanceTol, points, processed, point, id, cluster);
+			Proximity(tree, distanceTol, points, i, processed, cluster);
 			// Add cluster to output vector
 			clusters.push_back(cluster);
+			++i;
 			}
-		}
+
 	}
 	return clusters;
 
