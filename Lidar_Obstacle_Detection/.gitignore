@@ -1,3 +1,8 @@
 a.out
 *.o
 build/*
+
+src/quiz/cluster/build/*
+src/quiz/ransac/build/*
+
+*.sh

@@ -86,10 +86,10 @@ void Proximity(KdTree* tree, float distanceTol,
 		processed[id] = true;  // Mark point as processed
 
 		// Find nearby points within Distance Tolerance
-		std::vector<int> nearbyIds = tree->search(point, distanceTol);
+		std::vector<int> nearbyIds = tree->search(points[id], distanceTol);
 		for (auto& nearbyId : nearbyIds) {
 			// If nearby point has not been processed
-			if (processed[nearbyId] == false)
+			if (!processed[nearbyId])
 				// Call recursive Proximity
 				Proximity(tree, distanceTol, points, nearbyId, processed, cluster);
 		}
@@ -106,16 +106,15 @@ std::vector<std::vector<int>> euclideanCluster(const std::vector<std::vector<flo
 	// Iterate through each point
 	int i = 0;
 	while(i < points.size()) {
-			// If point has not been processed
-			if (processed[i] == false) {
+			// If point has been proceed, go to next point
+			if (processed[i]) { ++i; continue; }
 			// Create new cluster
 			std::vector<int> cluster;
 			// Call recursive Proximity function
 			Proximity(tree, distanceTol, points, i, processed, cluster);
 			// Add cluster to output vector
 			clusters.push_back(cluster);
-			++i;
-			}
+
 
 	}
 	return clusters;
