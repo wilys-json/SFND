@@ -80,8 +80,7 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer)
   // ----------------------------------------------------
   // -----Open 3D viewer and display City Block     -----
   // ----------------------------------------------------
-  std::vector<std::string> file = Parameters::get<std::string>("FILTER_RES");
-  for (auto& line : file) std::cout << line << std::endl;
+  float filter_res = Parameters::get<float, float>("FILTER_RES");
   ProcessPointClouds<pcl::PointXYZI>* pointProcessorI = new ProcessPointClouds<pcl::PointXYZI>();
   pcl::PointCloud<pcl::PointXYZI>::Ptr inputCloud = pointProcessorI->loadPcd("../src/sensors/data/pcd/data_1/0000000000.pcd");
   // renderPointCloud(viewer,inputCloud,"inputCloud");
