@@ -1,0 +1,4 @@
+PCD_FILE ../src/sensors/data/pcd/data_1/0000000000.pcd
+FILTER_RES 0.3
+MIN_POINT -10 -6 -3 1
+MAX_POINT 30 10 2 1
