@@ -45,17 +45,17 @@ namespace Parameters {
   }
 
 
-  template <class OutputT, class InputT, std::size_t ...I>
-  OutputT make(vector<InputT>&args, std::index_sequence<I...>) {
+  template <class OutputT, class inputVector, std::size_t ...I>
+  OutputT make(inputVector& args, std::index_sequence<I...>) {
     return OutputT(args[I]...);
   }
 
 
-  template <class OutputT, typename ...InputT>
+  template <class OutputT, typename InputT>
   OutputT get(const string& targetKey) {
-    vector<InputT...> values =  getValues<InputT...>(targetKey);
+    vector<InputT> values =  getValues<InputT>(targetKey);
     if (values.size() == 1) return static_cast<OutputT>(values[0]);
-    return make<OutputT>(values, std::make_index_sequence<3>{});
+    return make<OutputT, vector<InputT>>(values, std::make_index_sequence<sizeof(values)>{});
   }
 
 };

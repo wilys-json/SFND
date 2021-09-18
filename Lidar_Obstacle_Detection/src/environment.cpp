@@ -81,7 +81,7 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer)
   // ----------------------------------------------------
   // -----Open 3D viewer and display City Block     -----
   // ----------------------------------------------------
-  Eigen::Vector4f test = Parameters::get<Eigen::Vector4f, int>(MIN_POINT);
+  auto test = Parameters::get<Eigen::Vector4f, int>(MIN_POINT);
   ProcessPointClouds<pcl::PointXYZI>* pointProcessorI = new ProcessPointClouds<pcl::PointXYZI>();
   pcl::PointCloud<pcl::PointXYZI>::Ptr inputCloud = pointProcessorI->loadPcd(Parameters::get<string, string>(PCD_FILE));
   // renderPointCloud(viewer,inputCloud,"inputCloud");
