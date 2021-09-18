@@ -9,6 +9,7 @@
 #include "processPointClouds.cpp"
 #include "parameters.h"
 
+
 std::vector<Car> initHighway(bool renderScene, pcl::visualization::PCLVisualizer::Ptr& viewer)
 {
 
@@ -80,11 +81,11 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer)
   // ----------------------------------------------------
   // -----Open 3D viewer and display City Block     -----
   // ----------------------------------------------------
-  float filter_res = Parameters::get<float, float>("FILTER_RES");
+  Eigen::Vector4f test = Parameters::get<Eigen::Vector4f, int>(MIN_POINT);
   ProcessPointClouds<pcl::PointXYZI>* pointProcessorI = new ProcessPointClouds<pcl::PointXYZI>();
-  pcl::PointCloud<pcl::PointXYZI>::Ptr inputCloud = pointProcessorI->loadPcd("../src/sensors/data/pcd/data_1/0000000000.pcd");
+  pcl::PointCloud<pcl::PointXYZI>::Ptr inputCloud = pointProcessorI->loadPcd(Parameters::get<string, string>(PCD_FILE));
   // renderPointCloud(viewer,inputCloud,"inputCloud");
-  pcl::PointCloud<pcl::PointXYZI>::Ptr filterCloud = pointProcessorI->FilterCloud(inputCloud, 0.3 , Eigen::Vector4f (-10, -6, -3, 1), Eigen::Vector4f (30, 10, 2, 1));
+  pcl::PointCloud<pcl::PointXYZI>::Ptr filterCloud = pointProcessorI->FilterCloud(inputCloud, Parameters::get<float, float>(FILTER_RES) , Eigen::Vector4f (-10, -6, -3, 1), Eigen::Vector4f (30, 10, 2, 1));
   renderPointCloud(viewer,filterCloud,"filterCloud");
   // std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessorI->SegmentPlane(filterCloud, 100, 0.2);
   // renderPointCloud(viewer,segmentCloud.first,"obstCloud",Color(1,0,0));

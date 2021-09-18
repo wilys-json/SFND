@@ -13,10 +13,13 @@ using std::vector;
 using std::istringstream;
 using std::make_integer_sequence;
 
+const string PCD_FILE{"PCD_FILE"};
+const string FILTER_RES{"FILTER_RES"};
+const string MIN_POINT{"MIN_POINT"};
+const string MAX_POINT{"MAX_POINT"};
 
 namespace Parameters {
 
-  struct empty {};
 
   const string paramDoc{"../src/params"};
 
@@ -41,18 +44,19 @@ namespace Parameters {
     return collector;
   }
 
+
+  template <class OutputT, class InputT, std::size_t ...I>
+  OutputT make(vector<InputT>&args, std::index_sequence<I...>) {
+    return OutputT(args[I]...);
+  }
+
+
   template <class OutputT, typename ...InputT>
   OutputT get(const string& targetKey) {
     vector<InputT...> values =  getValues<InputT...>(targetKey);
     if (values.size() == 1) return static_cast<OutputT>(values[0]);
-    template <std::size_t ...I>
-    return [values](OutputT& outputClass, indices<I...>) { return outputClass(values[I]...); };
+    return make<OutputT>(values, std::make_index_sequence<3>{});
   }
-  //
-  // template <class OutputT, typename InputT, std::size_t ...I>
-  // OutputT make(OutputT&& makeClass, vector<InputT>&args, indices<I...>) {
-  //   return T(args[I]...);
-  // }
 
 };
 
