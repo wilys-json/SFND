@@ -1,7 +1,7 @@
 /* \author Aaron Brown */
 // Quiz on implementing kd tree
 
-#include "../../render/render.h"
+// #include "../../render/render.h" // Comment out to include in main program
 
 
 // Structure to represent node of kd tree
