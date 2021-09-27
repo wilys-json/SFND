@@ -25,6 +25,8 @@ const string DISTANCE_THRESHOLD{"DISTANCE_THRESHOLD"};
 const string CLUSTER_TOL{"CLUSTER_TOL"};
 const string CLUSTER_MIN{"CLUSTER_MIN"};
 const string CLUSTER_MAX{"CLUSTER_MAX"};
+const string USE_PCL_RANSAC{"USE_PCL_RANSAC"};
+const string USE_PCL_EC("USE_PCL_EC");
 
 namespace Parameters {
 

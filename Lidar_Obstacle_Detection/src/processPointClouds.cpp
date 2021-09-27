@@ -1,7 +1,9 @@
 // PCL lib Functions for processing point clouds
 #include <chrono>
 #include "processPointClouds.h"
-
+#include "ransac3d.h"
+#include "ec.h"
+#include "quiz/cluster/kdtree.h"
 
 
 //constructor:
@@ -154,34 +156,41 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
 
 
 template<typename PointT>
-std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::SegmentPlane(typename pcl::PointCloud<PointT>::Ptr cloud, int maxIterations, float distanceThreshold)
+std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::SegmentPlane(typename pcl::PointCloud<PointT>::Ptr cloud, int maxIterations, float distanceThreshold, bool usePCL)
 {
     // // Comment out this block to time
     // auto startTime = std::chrono::steady_clock::now();
 
     pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients ());
     pcl::PointIndices::Ptr inliers (new pcl::PointIndices ());
-    // // Create the segmentation object
-    // pcl::SACSegmentation<PointT> seg;
-    // // Optional
-    // seg.setOptimizeCoefficients (true);
-    // // Mandatory
-    // seg.setModelType (pcl::SACMODEL_PLANE);
-    // seg.setMethodType (pcl::SAC_RANSAC);
-    // seg.setMaxIterations (maxIterations);
-    // seg.setDistanceThreshold (distanceThreshold);
-    //
-    //
-    // // Segment the largest planar component from the remaining cloud
-    // seg.setInputCloud (cloud);
-    // seg.segment (*inliers, *coefficients);
-    // if (inliers->indices.size () == 0)
-    // {
-    //   std::cerr << "Could not estimate a planar model for the given dataset." << std::endl;
-    // }
 
-    auto inliers_set = Ransac(cloud, maxIterations, distanceThreshold);
-    for (auto& index : inliers_set) inliers->indices.push_back(index);
+    // use PCL RANSAC
+    if (usePCL) {
+      // Create the segmentation object
+      pcl::SACSegmentation<PointT> seg;
+      // Optional
+      seg.setOptimizeCoefficients (true);
+      // Mandatory
+      seg.setModelType (pcl::SACMODEL_PLANE);
+      seg.setMethodType (pcl::SAC_RANSAC);
+      seg.setMaxIterations (maxIterations);
+      seg.setDistanceThreshold (distanceThreshold);
+
+
+      // Segment the largest planar component from the remaining cloud
+      seg.setInputCloud (cloud);
+      seg.segment (*inliers, *coefficients);
+      if (inliers->indices.size () == 0)
+      {
+        std::cerr << "Could not estimate a planar model for the given dataset." << std::endl;
+      }
+    } else {  // Use Custom RANSAC
+      RansacSegmentation<PointT> ransacSeg;
+      ransacSeg.setMaxIterations(maxIterations);
+      ransacSeg.setDistanceThreshold(distanceThreshold);
+      auto inliers_set = ransacSeg.extract(cloud);
+      for (auto& index : inliers_set) inliers->indices.push_back(index);
+    }
 
     // // Comment out this block to time
     // auto endTime = std::chrono::steady_clock::now();
@@ -194,34 +203,43 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
 
 
 template<typename PointT>
-std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::Clustering(typename pcl::PointCloud<PointT>::Ptr cloud, float clusterTolerance, int minSize, int maxSize)
+std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::Clustering(typename pcl::PointCloud<PointT>::Ptr cloud, float clusterTolerance, int minSize, int maxSize, bool usePCL)
 {
 
     // Time clustering process
     auto startTime = std::chrono::steady_clock::now();
 
     std::vector<typename pcl::PointCloud<PointT>::Ptr> clusters;
-
-    // TODO:: Fill in the function to perform euclidean clustering to group detected obstacles
-    // Creating the KdTree object for the search method of the extraction
-    // Codes from PCL documentation
-    typename pcl::search::KdTree<PointT>::Ptr tree (new pcl::search::KdTree<PointT>);
-    tree->setInputCloud (cloud);
-
     std::vector<pcl::PointIndices> cluster_indices;
-    pcl::EuclideanClusterExtraction<PointT> ec;
-    ec.setClusterTolerance (clusterTolerance); // 2cm
-    ec.setMinClusterSize (minSize);
-    ec.setMaxClusterSize (maxSize);
-    ec.setSearchMethod (tree);
-    ec.setInputCloud (cloud);
-    ec.extract (cluster_indices);
+    if (usePCL) {
+      // Creating the KdTree object for the search method of the extraction
+      // Codes from PCL documentation
+      typename pcl::search::KdTree<PointT>::Ptr tree (new pcl::search::KdTree<PointT>);
+      tree->setInputCloud (cloud);
+      pcl::EuclideanClusterExtraction<PointT> ec;
+      ec.setClusterTolerance (clusterTolerance); // 2cm
+      ec.setMinClusterSize (minSize);
+      ec.setMaxClusterSize (maxSize);
+      ec.setSearchMethod (tree);
+      ec.setInputCloud (cloud);
+      ec.extract (cluster_indices);
+
+    } else {
+      KdTree<PointT>* kdtree = new KdTree<PointT>(cloud);
+      EuclideanCluster3D<PointT> euclideanCluster;
+      euclideanCluster.setInputCloud(cloud);
+      euclideanCluster.setKdTree(kdtree);
+      euclideanCluster.setMax(maxSize);
+      euclideanCluster.setMin(minSize);
+      euclideanCluster.setClusterTolerance(clusterTolerance);
+      euclideanCluster.extract(cluster_indices);
+    }
 
     for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin (); it != cluster_indices.end (); ++it)
     {
       typename pcl::PointCloud<PointT>::Ptr cloud_cluster (new pcl::PointCloud<PointT>);
       for (const auto& idx : it->indices)
-        cloud_cluster->push_back ((*cloud)[idx]); //*
+      cloud_cluster->push_back ((*cloud)[idx]); //*
       cloud_cluster->width = cloud_cluster->size ();
       cloud_cluster->height = 1;
       cloud_cluster->is_dense = true;

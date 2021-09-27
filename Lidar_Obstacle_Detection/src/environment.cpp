@@ -89,9 +89,9 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer, ProcessPointCloud
 
 
   pcl::PointCloud<pcl::PointXYZI>::Ptr filterCloud = pointProcessorI->FilterCloud(inputCloud, Parameters::getValues<float>(FILTER_RES)[0] , minPoint, maxPoint);
-  std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessorI->SegmentPlane(filterCloud, Parameters::getValues<int>(MAX_ITER)[0], Parameters::getValues<float>(DISTANCE_THRESHOLD)[0]);
+  std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessorI->SegmentPlane(filterCloud, Parameters::getValues<int>(MAX_ITER)[0], Parameters::getValues<float>(DISTANCE_THRESHOLD)[0], Parameters::getValues<bool>(USE_PCL_RANSAC)[0]);
   renderPointCloud(viewer,segmentCloud.second,"planeCloud",Color(0,1,0));
-  std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessorI->Clustering(segmentCloud.first, Parameters::getValues<float>(CLUSTER_TOL)[0], Parameters::getValues<int>(CLUSTER_MIN)[0], Parameters::getValues<int>(CLUSTER_MAX)[0]);
+  std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessorI->Clustering(segmentCloud.first, Parameters::getValues<float>(CLUSTER_TOL)[0], Parameters::getValues<int>(CLUSTER_MIN)[0], Parameters::getValues<int>(CLUSTER_MAX)[0], Parameters::getValues<bool>(USE_PCL_EC)[0]);
   int clusterId = 0;
   std::vector<Color> colors = {Color(1,0,0), Color(0,0,1), Color(1,1,0)};
 
