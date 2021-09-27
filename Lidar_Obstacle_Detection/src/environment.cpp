@@ -87,7 +87,6 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer, ProcessPointCloud
   Eigen::Vector4f minPoint(minPointarr);
   Eigen::Vector4f maxPoint(maxPointarr);
 
-
   pcl::PointCloud<pcl::PointXYZI>::Ptr filterCloud = pointProcessorI->FilterCloud(inputCloud, Parameters::getValues<float>(FILTER_RES)[0] , minPoint, maxPoint);
   std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmentCloud = pointProcessorI->SegmentPlane(filterCloud, Parameters::getValues<int>(MAX_ITER)[0], Parameters::getValues<float>(DISTANCE_THRESHOLD)[0]);
   renderPointCloud(viewer,segmentCloud.second,"planeCloud",Color(0,1,0));
