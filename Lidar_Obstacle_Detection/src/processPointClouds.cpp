@@ -1,8 +1,8 @@
 // PCL lib Functions for processing point clouds
 #include <chrono>
 #include "processPointClouds.h"
-#include "ransac3d.h"
-#include "ec.h"
+#include "ransac3d.cpp"
+#include "ec.cpp"
 #include "quiz/cluster/kdtree.h"
 
 
