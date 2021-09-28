@@ -144,7 +144,7 @@ The workspace provided in the SFND classroom comes preinstallated with everythin
 [PCL Mac Compilation Docs](https://pcl.readthedocs.io/projects/tutorials/en/latest/compiling_pcl_macosx.html#compiling-pcl-macosx)
 
 
-### PARAMETERS TUNING
+## PARAMETERS TUNING
 `parameter.h` offers a more dynamic input of parameters at runtime, so that you do not need to change the parameters and compile again every time.
 
 `src/params` contains all the controllable parameters for which you can adjust:
