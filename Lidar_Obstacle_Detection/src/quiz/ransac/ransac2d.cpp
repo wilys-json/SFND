@@ -97,15 +97,15 @@ std::unordered_set<int> Ransac(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int ma
 		C = ((x2 - x1) * (y3 - y1) - (y2 - y1) * (x3 - x1));
 		D = (A * x1 + B * y1 + C * z1) * -1;
 	// Measure distance between every point and fitted line
-		for (int i = 0; i < cloud->points.size(); ++i) {
-				if (tempInliersResult.count(i) > 0) continue;
+		for (int j = 0; j < cloud->points.size(); ++j) {
+				if (tempInliersResult.count(j) > 0) continue;
 		// If distance is smaller than threshold count it as inlier
 				float dist = std::abs(
-					(A * cloud->points[i].x) +
-					(B * cloud->points[i].y) +
-					(C * cloud->points[i].z) +
+					(A * cloud->points[j].x) +
+					(B * cloud->points[j].y) +
+					(C * cloud->points[j].z) +
 					D) / std::sqrt(std::pow(A, 2) + std::pow(B, 2) + std::pow(C, 2));
-				if (dist <= distanceTol) tempInliersResult.insert(i);
+				if (dist <= distanceTol) tempInliersResult.insert(j);
 		}
 		if (tempInliersResult.size() > inliersResult.size())
 			inliersResult = tempInliersResult;
