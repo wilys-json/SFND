@@ -171,14 +171,13 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::C
 
     } else {
       KdTree<PointT>* kdtree = new KdTree<PointT>(cloud);
-      std::cout << kdtree->size() << std::endl;
       EuclideanCluster3D<PointT> euclideanCluster;
       euclideanCluster.setInputCloud(cloud);
       euclideanCluster.setKdTree(kdtree);
       euclideanCluster.setMax(maxSize);
       euclideanCluster.setMin(minSize);
       euclideanCluster.setClusterTolerance(clusterTolerance);
-      euclideanCluster.extract(&cluster_indices);
+      euclideanCluster.extract(cluster_indices);
     }
 
     for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin (); it != cluster_indices.end (); ++it)

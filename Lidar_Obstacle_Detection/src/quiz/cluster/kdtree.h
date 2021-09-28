@@ -69,21 +69,12 @@ private:
 
 	void insertHelper(Node<PointT>** currentNode, PointT point, int depth, int id) {
 		if (*currentNode == nullptr) { *currentNode = new Node<PointT>(point, id); return; }
-		float currentValue;
-		float otherValue;
-		switch(depth%3) {
-			case 0:
-				otherValue = point.x;
-				currentValue = (*currentNode)->point.x;
-			case 1:
-				otherValue = point.y;
-				currentValue = (*currentNode)->point.y;
-			case 2:
-				otherValue = point.z;
-				currentValue = (*currentNode)->point.z;
-		}
+		std::vector<float> currentValues{(*currentNode)->point.x,
+																		 (*currentNode)->point.y,
+																	 	 (*currentNode)->point.z};
+		std::vector<float> otherValues{point.x, point.y, point.z};
 
-		if (otherValue <= currentValue)
+		if (otherValues[depth%3] <= currentValues[depth%3])
 			insertHelper(&((*currentNode)->left), point, depth+1, id);
 		else
 			insertHelper(&((*currentNode)->right), point, depth+1, id);
@@ -132,33 +123,17 @@ private:
 		if (x <= (tx + distanceTol) && x >= (tx - distanceTol) &&
 				y <= (ty + distanceTol) && y >= (ty - distanceTol) &&
 			  z <= (tz + distanceTol) && z >= (tz - distanceTol)) {
-			float distance = std::sqrt(
-				std::pow((tx - x),2) + std::pow((ty - y),2) + std::pow((tz - z),2)
-			);
+			float distance = std::sqrt((x-tx)*(x-tx) + (y-ty)*(y-ty) + (z-tz)*(z-tz));
 			if (distance <= distanceTol) ids.push_back(currentNode->id);
 		}
 
 		std::vector<float> currentValues{x,y,z};
 		std::vector<float> targetValues{tx,ty,tz};
 
-		if ((targetValues[depth%2] - distanceTol) < currentValues[depth%2])
+		if ((targetValues[depth%3] - distanceTol) < currentValues[depth%3])
 			searchHelper(ids, currentNode->left, target, distanceTol, depth+1);
-		if ((targetValues[depth%2] + distanceTol) > currentValues[depth%2])
+		if ((targetValues[depth%3] + distanceTol) > currentValues[depth%3])
 			searchHelper(ids, currentNode->right, target, distanceTol, depth+1);
-	}
-
-	int size() {
-		int i = 0;
-		auto currentNode = root;
-		return traverse(root, i);
-	}
-
-	int traverse(Node<PointT>* node, int size) {
-		if (node == nullptr) return size;
-		++size;
-		size = traverse(node->left, size);
-		size = traverse(node->right, size);
-		return size;
 	}
 
 };

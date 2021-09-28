@@ -18,7 +18,7 @@ private:
 
 
     // Recursive Function to find nearby points in the same cluster
-    void Proximity(pcl::PointIndices cluster, const int& id)
+    void Proximity(pcl::PointIndices& cluster, const int& id)
     {
 
         cluster.indices.push_back(id); // Add point to cluster
@@ -26,7 +26,6 @@ private:
 
         // Find nearby points within Distance Tolerance
         std::vector<int> nearbyIds = tree->search(cloud->points[id], clusterTolerance);
-        std::cout << nearbyIds.size() << std::endl;
         for (auto& nearbyId : nearbyIds) {
           // If nearby point has not been processed
           if (!processed[nearbyId])
@@ -50,7 +49,7 @@ private:
   void setClusterTolerance(float clusterTol) { clusterTolerance = clusterTol; };
 
   // Clustering algorithm using euclidean distance
-  void extract(std::vector<pcl::PointIndices>* clusterIndices)
+  void extract(std::vector<pcl::PointIndices>& clusterIndices)
   {
 
   	// Iterate through each point
@@ -63,7 +62,11 @@ private:
   			// Call recursive Proximity function
   			Proximity(cluster, i);
   			// Add cluster to output vector
-  			clusterIndices->push_back(cluster);
+        if (cluster.indices.size() >= minClusterSize &&
+            cluster.indices.size() <= maxClusterSize)
+  			       clusterIndices.push_back(cluster);
+        else for(auto& index : cluster.indices) processed[index] = false;
+        ++i;
   	}
 
   }

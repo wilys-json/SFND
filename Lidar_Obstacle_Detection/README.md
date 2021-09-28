@@ -26,7 +26,7 @@ The workspace provided in the SFND classroom comes preinstallated with everythin
 
 ## Local Installation
 
-### Ubuntu 
+### Ubuntu
 
 1. Clone this github repo:
 
@@ -39,22 +39,22 @@ The workspace provided in the SFND classroom comes preinstallated with everythin
 
    ```cmake
    cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-   
+
    add_definitions(-std=c++14)
-   
+
    set(CXX_FLAGS "-Wall")
    set(CMAKE_CXX_FLAGS, "${CXX_FLAGS}")
-   
+
    project(playback)
-   
+
    find_package(PCL 1.11 REQUIRED)
-   
+
    include_directories(${PCL_INCLUDE_DIRS})
    link_directories(${PCL_LIBRARY_DIRS})
    add_definitions(${PCL_DEFINITIONS})
    list(REMOVE_ITEM PCL_LIBRARIES "vtkproj4")
-   
-   
+
+
    add_executable (environment src/environment.cpp src/render/render.cpp src/processPointClouds.cpp)
    target_link_libraries (environment ${PCL_LIBRARIES})
    ```
@@ -76,11 +76,11 @@ The workspace provided in the SFND classroom comes preinstallated with everythin
 
 #### Install via Homebrew
 1. install [homebrew](https://brew.sh/)
-2. update homebrew 
+2. update homebrew
 	```bash
 	$> brew update
 	```
-3. add  homebrew science [tap](https://docs.brew.sh/Taps) 
+3. add  homebrew science [tap](https://docs.brew.sh/Taps)
 	```bash
 	$> brew tap brewsci/science
 	```
@@ -88,7 +88,7 @@ The workspace provided in the SFND classroom comes preinstallated with everythin
 	```bash
 	$> brew options pcl
 	```
-5. install PCL 
+5. install PCL
 	```bash
 	$> brew install pcl
 	```
@@ -142,3 +142,33 @@ The workspace provided in the SFND classroom comes preinstallated with everythin
 [PCL Source Github](https://github.com/PointCloudLibrary/pcl)
 
 [PCL Mac Compilation Docs](https://pcl.readthedocs.io/projects/tutorials/en/latest/compiling_pcl_macosx.html#compiling-pcl-macosx)
+
+
+### PARAMETERS TUNING
+`parameter.h` offers a more dynamic input of parameters at runtime, so that you do not need to change the parameters and compile again every time.
+
+`src/params` contains all the controllable parameters for which you can adjust:
+
+1. PCD_FOLDER : Path to Point Cloud Data for `streamPcd`
+
+2. PCD_FILE : Individual Point Cloud Data file
+
+3. FILTER_RES (float) : Filter resolution for `filterCloud`
+
+4. MIN_POINT (4 floats): Minimum Point (Vector4f) for `filterCloud`
+
+5. MAX_POINT (4 floats): Maximum Point (Vector4f)  for `filterCloud`
+
+6. MAX_ITER (int): Maxmimum Iterations for Ransac
+
+7. DISTANCE_THRESHOLD (float) : Distance Threshold for Ransac
+
+8. CLUSTER_TOL (float) : Cluster Tolerance for Euclidean Clustering
+
+9. CLUSTER_MIN (int) : Minimum size of Cluster
+
+10. CLUSTER_MAX (int) : Maximum size of Cluster
+
+11. USE_PCL_RANSAC (bool) : set to `0` for using custom Ransac; set to `1` for using PCL built-in Ransac (Set to `0` for assignment submission)
+
+12. USE_PCL_EC (bool) : set to `0` for using custom Euclidean Clustering; set to `1` for using PCL built-in Euclidean Clustering (Set to `0` for assignment submission)
