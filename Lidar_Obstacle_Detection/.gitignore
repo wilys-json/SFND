@@ -6,3 +6,7 @@ src/quiz/cluster/build/*
 src/quiz/ransac/build/*
 
 *.sh
+
+activate.cpp
+activate
+activate.exe
