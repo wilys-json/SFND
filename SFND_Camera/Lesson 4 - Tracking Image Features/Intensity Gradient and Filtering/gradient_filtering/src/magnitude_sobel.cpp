@@ -10,6 +10,7 @@ void magnitudeSobel()
 {
     // load image from file
     cv::Mat img;
+
     img = cv::imread("./images/img1gray.png");
 
     // convert image to grayscale
@@ -19,16 +20,17 @@ void magnitudeSobel()
     // apply smoothing using the GaussianBlur() function from the OpenCV
     // ToDo : Add your code here
 
+
     // create filter kernels using the cv::Mat datatype both for x and y
     // ToDo : Add your code here
 
     // apply filter using the OpenCv function filter2D()
     // ToDo : Add your code here
-    
 
-    // compute magnitude image based on the equation presented in the lesson 
+
+    // compute magnitude image based on the equation presented in the lesson
     // ToDo : Add your code here
-    
+
 
     // show result
     string windowName = "Gaussian Blurring";
